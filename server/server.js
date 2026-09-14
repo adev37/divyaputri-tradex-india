@@ -1,23 +1,20 @@
 // server.js
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*'
 }));
 app.use(express.json());
 
-// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error:', err));
 
-// Data model
 const contactSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -27,7 +24,6 @@ const contactSchema = new mongoose.Schema({
 });
 const Contact = mongoose.model('Contact', contactSchema);
 
-// Contact form route
 app.post('/contact', async (req, res) => {
   const { name, email, company, message } = req.body;
 
@@ -47,7 +43,6 @@ app.post('/contact', async (req, res) => {
   }
 });
 
-// Health check (Render ke liye zaroori)
 app.get('/health', (req, res) => res.send('OK'));
 
 const PORT = process.env.PORT || 10000;
