@@ -21,8 +21,7 @@ export default function About() {
             gear, and railway components.
           </p>
           <p>
-            Rather than building separate solutions for each industry, we
-            develop one underlying nano-technology platform and adapt it to
+            nano-technology platform and adapt it to
             the performance requirements of each product category.
           </p>
         </div>
