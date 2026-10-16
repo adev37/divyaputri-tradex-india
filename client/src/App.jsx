@@ -1,21 +1,29 @@
-import Header from "./components/Header.jsx";
-import Hero from "./components/Hero.jsx";
-import Products from "./components/Products.jsx";
-import NanoAdvantage from "./components/NanoAdvantage.jsx";
-import About from "./components/About.jsx";
-import Contact from "./components/Contact.jsx";
-import Footer from "./components/Footer.jsx";
+import { Routes, Route } from 'react-router-dom';
+import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
+import ScrollToTop from './components/common/ScrollToTop';
+import AIChatAssistant from './components/ai/AIChatAssistant';  // ← naya
+import HomePage from './pages/HomePage';
+import AuthPage from './pages/AuthPage';
+import AdminPage from './pages/AdminPage';
+import './App.css';
 
-export default function App() {
+function App() {
   return (
-    <div className="App">
-      <Header />
-      <Hero />
-      <Products />
-      <NanoAdvantage />
-      <About />
-      <Contact />
+    <div className="app">
+      <ScrollToTop />
+      <Navbar />
+      <main className="app__main">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </main>
       <Footer />
+      <AIChatAssistant />  {/* ← naya */}
     </div>
   );
 }
+
+export default App;

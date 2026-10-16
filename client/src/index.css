@@ -1,21 +1,8 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* =====================================================
+   GLOBAL RESET — kept minimal. All real styles in globals.css
+   ===================================================== */
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: "IBM Plex Sans", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+#root {
+  min-height: 100vh;
+  isolation: isolate;
 }
