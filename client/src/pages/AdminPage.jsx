@@ -4,7 +4,6 @@ import {
   FiUsers,
   FiMail,
   FiMessageCircle,
-  FiLogOut,
   FiRefreshCw,
   FiInbox,
   FiExternalLink,
@@ -22,11 +21,11 @@ export default function AdminPage() {
 
   const token = localStorage.getItem('token');
 
-  useEffect(() => {
-    if (!token) {
-      window.location.href = '/auth';
-      return;
-    }
+useEffect(() => {
+  if (!token) {
+    window.location.href = '/admin-login';
+    return;
+  }
     const storedUser = localStorage.getItem('user');
     if (storedUser) setUser(JSON.parse(storedUser));
     fetchData();
@@ -61,12 +60,6 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/';
   };
 
   if (loading) {
@@ -124,12 +117,6 @@ export default function AdminPage() {
           <div className="admin-header__actions">
             <button className="admin-btn admin-btn--ghost" onClick={fetchData}>
               <FiRefreshCw /> Refresh
-            </button>
-            <button
-              className="admin-btn admin-btn--solid"
-              onClick={handleLogout}
-            >
-              <FiLogOut /> Logout
             </button>
           </div>
         </motion.header>

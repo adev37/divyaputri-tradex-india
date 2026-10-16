@@ -1,10 +1,20 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiMail, FiLock, FiUser, FiArrowRight, FiShield } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import {
+  FiMail,
+  FiLock,
+  FiUser,
+  FiArrowRight,
+  FiShield,
+  FiEye,
+  FiEyeOff,
+} from 'react-icons/fi';
 import './AuthPage.css';
 
 export default function AuthPage() {
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,7 +32,8 @@ export default function AuthPage() {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const endpoint = mode === 'signin' ? '/api/auth/login' : '/api/auth/register';
+      const endpoint =
+        mode === 'signin' ? '/api/auth/login' : '/api/auth/register';
 
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
@@ -34,16 +45,21 @@ export default function AuthPage() {
 
       if (!res.ok) throw new Error(data.error || 'Authentication failed');
 
-      // Save token
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user || {}));
-      }
+// Check: agar admin hai, to /auth page pe login na hone do
+if (data.user?.role === 'admin') {
+  throw new Error('Admin users must sign in from the Admin Login page');
+}
 
-      setStatus('success');
-      setTimeout(() => {
-        window.location.href = '/admin';
-      }, 800);
+if (data.token) {
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('user', JSON.stringify(data.user || {}));
+  window.dispatchEvent(new Event('userAuthChanged'));
+}
+
+setStatus('success');
+setTimeout(() => {
+  window.location.href = '/';  // ← Home pe redirect (admin dashboard nahi)
+}, 800);
     } catch (err) {
       console.error(err);
       setStatus('error');
@@ -101,13 +117,17 @@ export default function AuthPage() {
             {/* Tabs */}
             <div className="auth-card__tabs">
               <button
-                className={`auth-card__tab ${mode === 'signin' ? 'is-active' : ''}`}
+                className={`auth-card__tab ${
+                  mode === 'signin' ? 'is-active' : ''
+                }`}
                 onClick={() => setMode('signin')}
               >
                 Sign In
               </button>
               <button
-                className={`auth-card__tab ${mode === 'signup' ? 'is-active' : ''}`}
+                className={`auth-card__tab ${
+                  mode === 'signup' ? 'is-active' : ''
+                }`}
                 onClick={() => setMode('signup')}
               >
                 Sign Up
@@ -124,6 +144,7 @@ export default function AuthPage() {
             </div>
 
             <form className="auth-card__form" onSubmit={handleSubmit}>
+              {/* 1. NAME — sirf Sign Up me */}
               {mode === 'signup' && (
                 <div className="auth-field">
                   <label htmlFor="name">Full name</label>
@@ -142,6 +163,7 @@ export default function AuthPage() {
                 </div>
               )}
 
+              {/* 2. EMAIL — dono me */}
               <div className="auth-field">
                 <label htmlFor="email">Email address</label>
                 <div className="auth-field__input">
@@ -158,22 +180,36 @@ export default function AuthPage() {
                 </div>
               </div>
 
+              {/* 3. PASSWORD — dono me, ek hi baar */}
               <div className="auth-field">
                 <label htmlFor="password">Password</label>
                 <div className="auth-field__input">
                   <FiLock />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder={
-                      mode === 'signup' ? 'Minimum 8 characters' : 'Your password'
+                      mode === 'signup'
+                        ? 'Minimum 8 characters'
+                        : 'Your password'
                     }
                     value={formData.password}
                     onChange={handleChange}
                     minLength={8}
                     required
                   />
+                  <button
+                    type="button"
+                    className="auth-field__toggle"
+                    onClick={() => setShowPassword((p) => !p)}
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
                 </div>
               </div>
 
@@ -201,9 +237,9 @@ export default function AuthPage() {
               )}
             </form>
 
-            <div className="auth-card__footer">
-              <a href="#admin">Admin sign in →</a>
-            </div>
+          <div className="auth-card__footer">
+  <Link to="/admin-login">Admin sign in →</Link>
+</div>
           </div>
         </motion.div>
       </div>

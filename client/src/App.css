@@ -17,3 +17,19 @@
 .app__main > section {
   width: 100%;
 }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app__main {
+  flex: 1;
+  padding-top: var(--navbar-height);
+}
+
+/* Auth pages: no navbar, no padding */
+.app__main--no-navbar {
+  padding-top: 0;
+}

@@ -10,6 +10,12 @@
   overflow: hidden;
 }
 
+@media (min-width: 1024px) {
+  .auth-page {
+    padding: var(--space-12) var(--space-8);
+  }
+}
+
 .auth-page__bg {
   position: absolute;
   inset: 0;
@@ -229,13 +235,14 @@
   align-items: center;
 }
 
-.auth-field__input svg {
+.auth-field__input > svg {
   position: absolute;
   left: var(--space-4);
   color: var(--text-muted);
   font-size: 1.1rem;
   pointer-events: none;
   transition: color var(--transition-fast);
+  z-index: 1;
 }
 
 .auth-field__input input {
@@ -261,15 +268,26 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
-.auth-field__input input:focus + svg,
-.auth-field__input:focus-within svg {
+.auth-field__input:focus-within > svg {
   color: var(--color-primary);
 }
 
 .auth-card__submit {
   width: 100%;
   justify-content: center;
-  margin-top: var(--space-2);
+  margin-top: var(--space-4);
+  padding: 14px 24px;
+  min-height: 52px;
+  font-size: var(--fs-base);
+  font-weight: 700;
+  gap: var(--space-3);
+  border-radius: var(--radius-md);
+  letter-spacing: 0.01em;
+}
+
+.auth-card__submit svg {
+  font-size: 1.15rem;
+  flex-shrink: 0;
 }
 
 .auth-card__error {
@@ -297,4 +315,39 @@
 
 .auth-card__footer a:hover {
   color: var(--color-accent);
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+.auth-field__input {
+  position: relative; /* already hai, confirm karo */
+}
+
+.auth-field__toggle {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 1.05rem;
+}
+
+.auth-field__toggle:hover {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+/* Input ke andar right padding, icon ke liye */
+.auth-field__input input[type='password'],
+.auth-field__input input[type='text'] {
+  padding-right: 3rem;
 }
