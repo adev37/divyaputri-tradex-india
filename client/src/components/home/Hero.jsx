@@ -53,7 +53,7 @@ export default function Hero() {
             animate="visible"
             custom={1}
           >
-            Nano-engineered solutions for{' '}
+            Nano - engineered solutions for{' '}
             <span className="text-gradient">tomorrow's industries.</span>
           </motion.h1>
 
@@ -64,7 +64,7 @@ export default function Hero() {
             animate="visible"
             custom={2}
           >
-            From lab-grade nano coatings to precision components — Divyaputri
+            From lab-grade nano coatings to precision components Divyaputri
             Tradex LLP delivers performance materials that power electronics,
             healthcare, railways, and sports equipment across India.
           </motion.p>
@@ -127,10 +127,10 @@ export default function Hero() {
           <div className="hero__diagram-wrap">
             <div className="hero__diagram-glow" />
             <svg
-              className="hero__diagram"
-              viewBox="0 0 420 340"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+  className="hero__diagram"
+  viewBox="-20 0 480 340"
+  xmlns="http://www.w3.org/2000/svg"
+>
               <circle cx="180" cy="170" r="150" className="ring ring-1" />
               <circle cx="180" cy="170" r="115" className="ring ring-2" />
               <circle cx="180" cy="170" r="80" className="ring ring-3" />

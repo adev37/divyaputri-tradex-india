@@ -5,7 +5,7 @@ const contactSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true, maxlength: 100 },
     email: { type: String, required: true, trim: true, lowercase: true },
     company: { type: String, default: '', trim: true, maxlength: 100 },
-    phone: { type: String, trim: true, maxlength: 20, default: '' },
+    phone: { type: String, trim: true, maxlength: 30, default: '' },
     message: { type: String, required: true, trim: true, maxlength: 2000 },
     ipAddress: { type: String, default: '' },
   },

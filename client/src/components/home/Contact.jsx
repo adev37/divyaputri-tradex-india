@@ -2,13 +2,30 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   FiMail,
-  FiPhone,
   FiMapPin,
   FiClock,
   FiSend,
   FiCheckCircle,
+  FiBriefcase,
 } from 'react-icons/fi';
+import PhoneInput, { getCountryCallingCode } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import './Contact.css';
+
+const COUNTRY_LIMITS = {
+  IN: 10, US: 10, GB: 10, CA: 10, AU: 9, DE: 11, FR: 9, JP: 10, CN: 11,
+  AE: 9, SA: 9, SG: 8, NP: 10, BD: 10, LK: 9, PK: 10, MY: 9, ID: 11,
+  TH: 9, PH: 10, VN: 9, KR: 10, IT: 10, ES: 9, RU: 10, BR: 11, MX: 10,
+  ZA: 9, NG: 10, KE: 9, EG: 10, TR: 10, IR: 10, IQ: 10, IL: 9, NZ: 9,
+  IE: 9, NL: 9, BE: 9, CH: 9, AT: 10, SE: 9, NO: 8, DK: 8, FI: 9, PL: 9,
+  PT: 9, GR: 10, CZ: 9, HU: 9, RO: 9, UA: 9, AR: 10, CL: 9, CO: 10,
+  PE: 9, VE: 10, EC: 9, UY: 8, PY: 9, BO: 8, CR: 8, PA: 8, DO: 10,
+  GT: 8, SV: 8, HN: 8, NI: 8, CU: 8, JM: 10, TT: 10, BH: 8, KW: 8,
+  QA: 8, OM: 8, JO: 9, LB: 8, SY: 9, YE: 9, AF: 9, MM: 9, KH: 9,
+  LA: 9, MN: 8, TW: 9, HK: 8, MO: 8,
+};
+
+const DEFAULT_LIMIT = 15;
 
 const CONTACT_INFO = [
   {
@@ -18,10 +35,10 @@ const CONTACT_INFO = [
     href: 'mailto:info@divyaputritradex.com',
   },
   {
-    icon: FiPhone,
-    label: 'Call Us',
-    value: '+91 98765 43210',
-    href: 'tel:+919876543210',
+    icon: FiBriefcase,
+    label: 'Company',
+    value: 'Divyaputri Tradex LLP',
+    href: '#',
   },
   {
     icon: FiMapPin,
@@ -53,29 +70,103 @@ export default function Contact() {
     phone: '',
     message: '',
   });
-  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [country, setCountry] = useState('IN');
+  const [status, setStatus] = useState('idle');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const getMaxDigits = (countryCode) => {
+    return COUNTRY_LIMITS[countryCode] || DEFAULT_LIMIT;
+  };
+
+  // Total allowed digits (country code + local)
+  const getTotalAllowed = (countryCode) => {
+    const callingCode = getCountryCallingCode(countryCode);
+    return callingCode.length + getMaxDigits(countryCode);
+  };
+
+  // Block keydown if already at limit
+  const handleKeyDown = (e) => {
+    const allowed = [
+      'Backspace',
+      'Delete',
+      'ArrowLeft',
+      'ArrowRight',
+      'Tab',
+      'Home',
+      'End',
+      'Enter',
+    ];
+
+    // Non-digit keys block karo (allow backspace, arrows, etc.)
+    if (!/^\d$/.test(e.key) && !allowed.includes(e.key) && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      return;
+    }
+
+    // Agar digit hai aur limit reach ho chuki hai to block
+    if (/^\d$/.test(e.key)) {
+      const currentDigits = (formData.phone || '').replace(/\D/g, '');
+      const totalAllowed = getTotalAllowed(country);
+      if (currentDigits.length >= totalAllowed) {
+        e.preventDefault();
+      }
+    }
+  };
+
+  const handlePhoneChange = (value) => {
+    if (!value) {
+      setFormData({ ...formData, phone: '' });
+      return;
+    }
+
+    const digitsOnly = value.replace(/\D/g, '');
+    const totalAllowed = getTotalAllowed(country);
+
+    if (digitsOnly.length > totalAllowed) {
+      return; // Ignore
+    }
+
+    setFormData({ ...formData, phone: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
 
+    if (formData.phone) {
+      const digitsOnly = formData.phone.replace(/\D/g, '');
+      const callingCode = getCountryCallingCode(country);
+      const localDigits = digitsOnly.slice(callingCode.length);
+      const maxDigits = getMaxDigits(country);
+
+      if (localDigits.length !== maxDigits) {
+        setStatus('error');
+        setTimeout(() => setStatus('idle'), 4000);
+        return;
+      }
+    }
+
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       const res = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || '',
+          message: formData.message,
+        }),
       });
 
       if (!res.ok) throw new Error('Network error');
 
       setStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });
-
+      setCountry('IN');
       setTimeout(() => setStatus('idle'), 4000);
     } catch (err) {
       console.error(err);
@@ -87,7 +178,6 @@ export default function Contact() {
   return (
     <section className="contact section" id="contact">
       <div className="container">
-        {/* Header */}
         <div className="contact__header">
           <motion.span
             className="contact__eyebrow"
@@ -122,9 +212,7 @@ export default function Contact() {
           </motion.p>
         </div>
 
-        {/* Grid */}
         <div className="contact__grid">
-          {/* LEFT — Info */}
           <motion.div
             className="contact__info"
             variants={fadeIn}
@@ -172,7 +260,6 @@ export default function Contact() {
             </div>
           </motion.div>
 
-          {/* RIGHT — Form */}
           <motion.div
             className="contact__form-wrap"
             variants={fadeIn}
@@ -193,6 +280,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    maxLength={100}
                   />
                 </div>
 
@@ -210,16 +298,23 @@ export default function Contact() {
                 </div>
               </div>
 
+              {/* Phone */}
               <div className="contact-form__field">
                 <label htmlFor="phone">Phone (optional)</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  name="phone"
-                  placeholder="+91 98765 43210"
+                <PhoneInput
+                  international
+                  defaultCountry="IN"
+                  countryCallingCodeEditable={false}
+                  placeholder="Enter phone number"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={handlePhoneChange}
+                  onCountryChange={(newCountry) => setCountry(newCountry || 'IN')}
+                  onKeyDown={handleKeyDown}
+                  className="contact-phone-input"
                 />
+                <span className="contact-form__hint">
+                  Max {getMaxDigits(country)} digits for this country
+                </span>
               </div>
 
               <div className="contact-form__field">
@@ -232,6 +327,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  maxLength={2000}
                 />
               </div>
 
@@ -247,7 +343,7 @@ export default function Contact() {
                     <FiCheckCircle /> Message sent!
                   </>
                 ) : status === 'error' ? (
-                  'Failed — try again'
+                  'Invalid phone number'
                 ) : (
                   <>
                     Send message <FiSend />
@@ -262,7 +358,7 @@ export default function Contact() {
               )}
               {status === 'error' && (
                 <p className="contact-form__message contact-form__message--error">
-                  ❌ Something went wrong. Please try again.
+                  ❌ Please enter a valid phone number for the selected country.
                 </p>
               )}
             </form>

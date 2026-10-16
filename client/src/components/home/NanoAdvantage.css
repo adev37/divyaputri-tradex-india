@@ -140,17 +140,49 @@
 
 /* Icon */
 .advantage-card__icon {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
   background: var(--gradient-accent);
   color: #0F172A;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  font-size: 1.15rem;
   box-shadow: var(--shadow-md);
   transition: transform var(--transition-base);
+  flex-shrink: 0;
+}
+
+.advantage-card__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (min-width: 480px) {
+  .advantage-card__icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.35rem;
+  }
+
+  .advantage-card__icon svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .advantage-card__icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
+  }
+
+  .advantage-card__icon svg {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 .advantage-card:hover .advantage-card__icon {
