@@ -7,6 +7,7 @@ import {
   FiRefreshCw,
   FiInbox,
   FiExternalLink,
+  FiCpu,
 } from 'react-icons/fi';
 import './AdminPage.css';
 
@@ -18,14 +19,16 @@ export default function AdminPage() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [aiInsight, setAiInsight] = useState('');
+  const [insightLoading, setInsightLoading] = useState(false);
 
   const token = localStorage.getItem('token');
 
-useEffect(() => {
-  if (!token) {
-    window.location.href = '/admin-login';
-    return;
-  }
+  useEffect(() => {
+    if (!token) {
+      window.location.href = '/admin-login';
+      return;
+    }
     const storedUser = localStorage.getItem('user');
     if (storedUser) setUser(JSON.parse(storedUser));
     fetchData();
@@ -37,6 +40,7 @@ useEffect(() => {
 
     try {
       const headers = { Authorization: `Bearer ${token}` };
+
       const [statsRes, contactsRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/stats`, { headers }),
         fetch(`${API_URL}/api/admin/contacts`, { headers }),
@@ -54,10 +58,20 @@ useEffect(() => {
 
       setStats(statsData);
       setContacts(contactsData.contacts || []);
+      setLoading(false);
+
+      // Fetch AI Insights in background
+      setInsightLoading(true);
+      const insightRes = await fetch(`${API_URL}/api/admin/ai-insights`, { headers });
+      if (insightRes.ok) {
+        const insightData = await insightRes.json();
+        setAiInsight(insightData.insight);
+      }
+      setInsightLoading(false);
+
     } catch (err) {
       console.error(err);
       setError('Failed to load dashboard data');
-    } finally {
       setLoading(false);
     }
   };
@@ -96,11 +110,10 @@ useEffect(() => {
 
   return (
     <div className="admin-page">
-      {/* Background subtle grid */}
       <div className="admin-page__bg" />
 
       <div className="container admin-page__inner">
-        {/* Header */}
+        {/* 1. Header */}
         <motion.header
           className="admin-header"
           initial={{ opacity: 0, y: 20 }}
@@ -121,13 +134,35 @@ useEffect(() => {
           </div>
         </motion.header>
 
+        {/* 2. AI Insight Card (Header ke bahar, full width) */}
+        <motion.div
+          className="admin-ai-insight"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          <div className="admin-ai-insight__icon">
+            <FiCpu />
+          </div>
+          <div className="admin-ai-insight__content">
+            <h3>AI Business Insight</h3>
+            {insightLoading ? (
+              <p className="admin-ai-insight__loading">Analyzing your data...</p>
+            ) : aiInsight ? (
+              <p>{aiInsight}</p>
+            ) : (
+              <p>No insights available right now.</p>
+            )}
+          </div>
+        </motion.div>
+
         {error && (
           <div className="admin-error">
             <span>⚠️</span> {error}
           </div>
         )}
 
-        {/* Stats Grid */}
+        {/* 3. Stats Grid */}
         <div className="admin-stats">
           {statCards.map((stat, i) => {
             const Icon = stat.icon;
@@ -137,7 +172,7 @@ useEffect(() => {
                 className={`admin-stat admin-stat--${stat.color}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
+                transition={{ delay: 0.2 + i * 0.1, duration: 0.4 }}
               >
                 <div className="admin-stat__bar" />
                 <div className="admin-stat__icon">
@@ -154,12 +189,12 @@ useEffect(() => {
           })}
         </div>
 
-        {/* Contacts Table */}
+        {/* 4. Contacts Table */}
         <motion.section
           className="admin-section"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
         >
           <div className="admin-section__header">
             <div>

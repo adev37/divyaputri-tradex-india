@@ -395,3 +395,32 @@
   background: color-mix(in srgb, var(--error) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--error) 30%, transparent);
 }
+
+/* ===== AI MAGIC WRITE BUTTON ===== */
+.contact-form__ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.contact-form__ai-btn:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: #0F172A;
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.contact-form__ai-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

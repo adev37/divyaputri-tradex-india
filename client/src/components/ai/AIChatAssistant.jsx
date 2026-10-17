@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMessageCircle, FiX, FiSend, FiCpu } from 'react-icons/fi';
+import { FiMessageCircle, FiX, FiSend, FiCpu, FiMic, FiMicOff } from 'react-icons/fi';
 import './AIChatAssistant.css';
 
 const INITIAL_MESSAGE = {
@@ -20,8 +20,14 @@ export default function AIChatAssistant() {
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Voice State
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -35,9 +41,88 @@ export default function AIChatAssistant() {
     }
   }, [isOpen]);
 
+  // Cleanup speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  // 🎤 Speech-to-Text (Voice Recognition)
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Your browser does not support voice recognition. Please use Chrome.');
+      return;
+    }
+
+    // Agar pehle se listening hai to band karo
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    
+    recognition.lang = 'en-IN'; // Hindi ke liye 'hi-IN' use karein
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      // Thoda delay dekar auto-send karo taaki user ko dikhe kya type hua
+      setTimeout(() => {
+        sendMessage(transcript);
+      }, 500);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+  };
+
+  // 🔊 Text-to-Speech (AI Reply bol kar sunayega)
+  const speakReply = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    
+    // Purani awaaz rok do
+    window.speechSynthesis.cancel();
+
+    // Markdown/Emojis hata do taaki aawaz saaf aaye
+    const cleanText = text.replace(/[*#_]/g, '').replace(/[\u{1F600}-\u{1F6FF}]/gu, '');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'en-IN';
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
   const sendMessage = async (text) => {
     const userText = text || input.trim();
     if (!userText || isLoading) return;
+
+    // Agar AI bol raha hai, to naya message bhejte waqt chup karao
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
 
     const userMessage = { role: 'user', content: userText };
     const newMessages = [...messages, userMessage];
@@ -59,24 +144,22 @@ export default function AIChatAssistant() {
       if (!res.ok) throw new Error('Network error');
       const data = await res.json();
 
+      const aiReply = data.reply || "I couldn't process that. Please try again.";
+
       setMessages((prev) => [
         ...prev,
-        {
-          role: 'assistant',
-          content:
-            data.reply ||
-            "I couldn't process that. Please try again.",
-        },
+        { role: 'assistant', content: aiReply },
       ]);
+
+      // 🎯 AI ka reply aa gaya, ab usko bolo
+      speakReply(aiReply);
+
     } catch (err) {
       console.error(err);
+      const errorMsg = "Sorry, I'm having trouble connecting right now. Please try again later.";
       setMessages((prev) => [
         ...prev,
-        {
-          role: 'assistant',
-          content:
-            "Sorry, I'm having trouble connecting right now. Please try again later or reach us at info@divyaputritradex.com.",
-        },
+        { role: 'assistant', content: errorMsg },
       ]);
     } finally {
       setIsLoading(false);
@@ -148,7 +231,7 @@ export default function AIChatAssistant() {
                 </div>
                 <div className="ai-chat__header-text">
                   <h4>Divya AI</h4>
-                  <span>Online · Replies instantly</span>
+                  <span>{isSpeaking ? '🔊 Speaking...' : 'Online · Replies instantly'}</span>
                 </div>
               </div>
               <button
@@ -210,18 +293,28 @@ export default function AIChatAssistant() {
               </div>
             )}
 
-            {/* Input */}
+            {/* Input Area with Mic */}
             <div className="ai-chat__input-wrap">
+              <button
+                className={`ai-chat__mic ${isListening ? 'is-listening' : ''}`}
+                onClick={startListening}
+                disabled={isLoading}
+                aria-label="Voice input"
+              >
+                {isListening ? <FiMicOff /> : <FiMic />}
+              </button>
+              
               <textarea
                 ref={inputRef}
                 className="ai-chat__input"
-                placeholder="Ask me anything..."
+                placeholder="Ask me anything or click mic..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 rows={1}
                 disabled={isLoading}
               />
+              
               <button
                 className="ai-chat__send"
                 onClick={() => sendMessage()}

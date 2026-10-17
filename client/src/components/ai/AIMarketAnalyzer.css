@@ -1,0 +1,168 @@
+.ai-market {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.ai-market__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.ai-market__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.ai-market__header h3 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.ai-market__header p {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.ai-market__controls {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .ai-market__controls {
+    flex-direction: column;
+  }
+}
+
+.ai-market__select {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  font-family: inherit;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-soft);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  outline: none;
+}
+
+.ai-market__select:focus {
+  border-color: var(--color-primary);
+}
+
+.ai-market__btn {
+  white-space: nowrap;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ai-market__error {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.ai-market__result {
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--space-5);
+}
+
+.ai-market__result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.ai-market__result-header h4 {
+  font-size: var(--fs-lg);
+  color: var(--color-primary);
+}
+
+.ai-market__reset {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.ai-market__reset:hover {
+  transform: rotate(180deg);
+  color: var(--color-primary);
+}
+
+.ai-market__content {
+  background: var(--bg-soft);
+  padding: var(--space-6); /* Thoda aur space */
+  border-radius: var(--radius-lg);
+  max-height: 500px;
+  overflow-y: auto;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+/* Scrollbar ke wajah se heading cut na ho */
+.ai-market__content h3:first-child {
+  margin-top: var(--space-2); /* Thoda gap upar se */
+}
+
+/* Markdown Styling */
+.ai-market__content h3 {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-2);
+}
+
+.ai-market__content h3:first-child {
+  margin-top: 0;
+}
+
+.ai-market__content p {
+  margin-bottom: var(--space-3);
+  color: var(--text-secondary);
+}
+
+.ai-market__content ul,
+.ai-market__content ol {
+  margin-left: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+.ai-market__content li {
+  margin-bottom: var(--space-1);
+  list-style-type: disc;
+}
+
+.ai-market__content strong {
+  color: var(--text-primary);
+}

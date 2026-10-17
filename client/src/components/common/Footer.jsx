@@ -8,6 +8,7 @@ import {
   FiFacebook,
   FiInstagram,
   FiArrowUpRight,
+  FiBriefcase,
 } from 'react-icons/fi';
 import './Footer.css';
 
@@ -148,16 +149,16 @@ export default function Footer() {
               <li>
                 <FiMail />
                 <a href="mailto:info@divyaputritradex.com">
-                  info@divyaputritradex.com
+                  divyaputritradex@gmail.com
                 </a>
               </li>
               <li>
-                <FiPhone />
-                <a href="tel:+919876543210">+91 98765 43210</a>
+                <FiBriefcase /> {/* ← Phone ki jagah Briefcase icon */}
+                <span>Divyaputri Tradex LLP</span> {/* ← Company Name */}
               </li>
               <li>
                 <FiMapPin />
-                <span>Mumbai, Maharashtra, India</span>
+                <span>New Delhi, Delhi, India</span>
               </li>
             </ul>
 

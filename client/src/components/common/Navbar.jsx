@@ -13,15 +13,16 @@ import {
   FiGrid,
   FiChevronDown,
   FiUserPlus,
+  FiCpu,
 } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 import './Navbar.css';
 
 const NAV_LINKS = [
   { name: 'Home', href: '#home', icon: FiHome },
-  { name: 'About', href: '#about', icon: FiUser },
   { name: 'Products', href: '#products', icon: FiBox },
-  { name: 'Advantage', href: '#advantage', icon: FiZap },
+  { name: 'AI Tools', href: '#ai-tools', icon: FiCpu }, // ✅ Naya Link
+  { name: 'About', href: '#about', icon: FiUser },
   { name: 'Contact', href: '#contact', icon: FiMail },
 ];
 
@@ -77,21 +78,34 @@ const [user, setUser] = useState(() => {
   }, []);
 
   // Active section
+  // ✅ Active section (Upgraded logic)
   useEffect(() => {
     if (location.pathname !== '/') return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px' }
-    );
-    NAV_LINKS.forEach(({ href }) => {
-      const el = document.querySelector(href);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+
+    const handleScroll = () => {
+      // Screen ke center ke aas paas ka section pakadne ke liye
+      const scrollPosition = window.scrollY + 150; 
+
+      for (const link of NAV_LINKS) {
+        const el = document.querySelector(link.href);
+        if (el) {
+          const { offsetTop, offsetHeight } = el;
+          // Agar scroll position is section ke andar hai
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(link.href.slice(1));
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial load pe check karne ke liye
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
   // Body scroll lock

@@ -1,0 +1,283 @@
+.ai-doc-reader {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.ai-doc-reader__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.ai-doc-reader__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.ai-doc-reader__header h3 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.ai-doc-reader__header p {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.ai-dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: var(--bg-soft);
+}
+
+.ai-dropzone:hover,
+.ai-dropzone.is-dragging {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--bg-soft));
+}
+
+.ai-dropzone.has-file {
+  padding: var(--space-4);
+  border-style: solid;
+  cursor: default;
+}
+
+.ai-dropzone__icon {
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+
+.ai-dropzone__text {
+  color: var(--text-secondary);
+}
+
+.ai-dropzone__text strong {
+  color: var(--color-primary);
+}
+
+.ai-dropzone__file {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: left;
+}
+
+.ai-dropzone__file-icon {
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+.ai-dropzone__file-info {
+  flex: 1;
+}
+
+.ai-dropzone__file-name {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ai-dropzone__file-size {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.ai-dropzone__remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.ai-dropzone__remove:hover {
+  background: var(--bg-hover);
+  color: var(--error);
+}
+
+.ai-doc-reader__btn {
+  width: 100%;
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  font-size: var(--fs-lg);
+}
+
+.ai-doc-reader__error {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
+  text-align: center;
+}
+
+.ai-doc-reader__result {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--space-6);
+}
+
+.ai-doc-reader__result-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--success);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-lg);
+}
+
+.ai-doc-reader__result-content {
+  background: var(--bg-soft);
+  padding: var(--space-6); /* space-5 se badha kar space-6 karo */
+  border-radius: var(--radius-lg);
+  max-height: 500px;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+
+.ai-doc-reader__result-content h3:first-child {
+  margin-top: var(--space-2);
+}
+
+.ai-doc-reader__result-content p {
+  margin-bottom: var(--space-2);
+}
+
+.ai-doc-reader__reset {
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+/* Markdown Styling inside result */
+.ai-doc-reader__result-content {
+  background: var(--bg-soft);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  max-height: 500px;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+
+.ai-doc-reader__result-content h3 {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-2);
+}
+
+.ai-doc-reader__result-content h3:first-child {
+  margin-top: 0;
+}
+
+.ai-doc-reader__result-content p {
+  margin-bottom: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.ai-doc-reader__result-content ul,
+.ai-doc-reader__result-content ol {
+  margin-left: var(--space-5);
+  margin-bottom: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.ai-doc-reader__result-content li {
+  margin-bottom: var(--space-1);
+  list-style-type: disc;
+}
+
+.ai-doc-reader__result-content strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ===== RESULT HEADER & CLOSE ICON ===== */
+.ai-doc-reader__result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ai-doc-reader__result-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--success);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+}
+
+/* Top Right Close Icon */
+.ai-doc-reader__close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%; /* Circular */
+  background: var(--bg-soft);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.ai-doc-reader__close-icon:hover {
+  background: var(--error);
+  color: #fff;
+  border-color: transparent;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--error) 40%, transparent);
+}
+
+/* ===== BOTTOM ACTIONS ===== */
+.ai-doc-reader__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-color);
+}
+
+.ai-doc-reader__reset-btn {
+  flex: 1;
+  justify-content: center;
+  padding: var(--space-3);
+  font-weight: 600;
+}
+
+.ai-doc-reader__upload-btn {
+  flex: 1.5; /* Thoda bada button */
+  justify-content: center;
+  padding: var(--space-3);
+  font-weight: 600;
+  gap: var(--space-2);
+}

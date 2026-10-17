@@ -7,6 +7,7 @@ import {
   FiSend,
   FiCheckCircle,
   FiBriefcase,
+  FiZap,
 } from 'react-icons/fi';
 import PhoneInput, { getCountryCallingCode } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -31,8 +32,8 @@ const CONTACT_INFO = [
   {
     icon: FiMail,
     label: 'Email Us',
-    value: 'info@divyaputritradex.com',
-    href: 'mailto:info@divyaputritradex.com',
+    value: 'divyaputritradex@gmail.com',
+    href: 'mailto:divyaputritradex@gmail.com',
   },
   {
     icon: FiBriefcase,
@@ -43,13 +44,13 @@ const CONTACT_INFO = [
   {
     icon: FiMapPin,
     label: 'Visit Us',
-    value: 'Mumbai, Maharashtra, India',
+    value: 'New Delhi, Delhi, India',
     href: '#',
   },
   {
     icon: FiClock,
     label: 'Working Hours',
-    value: 'Mon–Sat · 9:00 AM – 7:00 PM',
+    value: 'Mon–Sat · 9:00 AM – 6:00 PM',
     href: '#',
   },
 ];
@@ -72,64 +73,61 @@ export default function Contact() {
   });
   const [country, setCountry] = useState('IN');
   const [status, setStatus] = useState('idle');
+  const [isGeneratingEmail, setIsGeneratingEmail] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const getMaxDigits = (countryCode) => {
-    return COUNTRY_LIMITS[countryCode] || DEFAULT_LIMIT;
-  };
+  const getMaxDigits = (countryCode) => COUNTRY_LIMITS[countryCode] || DEFAULT_LIMIT;
 
-  // Total allowed digits (country code + local)
   const getTotalAllowed = (countryCode) => {
     const callingCode = getCountryCallingCode(countryCode);
     return callingCode.length + getMaxDigits(countryCode);
   };
 
-  // Block keydown if already at limit
   const handleKeyDown = (e) => {
-    const allowed = [
-      'Backspace',
-      'Delete',
-      'ArrowLeft',
-      'ArrowRight',
-      'Tab',
-      'Home',
-      'End',
-      'Enter',
-    ];
-
-    // Non-digit keys block karo (allow backspace, arrows, etc.)
+    const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End', 'Enter'];
     if (!/^\d$/.test(e.key) && !allowed.includes(e.key) && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       return;
     }
-
-    // Agar digit hai aur limit reach ho chuki hai to block
     if (/^\d$/.test(e.key)) {
       const currentDigits = (formData.phone || '').replace(/\D/g, '');
-      const totalAllowed = getTotalAllowed(country);
-      if (currentDigits.length >= totalAllowed) {
-        e.preventDefault();
-      }
+      if (currentDigits.length >= getTotalAllowed(country)) e.preventDefault();
     }
   };
 
   const handlePhoneChange = (value) => {
-    if (!value) {
-      setFormData({ ...formData, phone: '' });
+    if (!value) return setFormData({ ...formData, phone: '' });
+    const digitsOnly = value.replace(/\D/g, '');
+    if (digitsOnly.length > getTotalAllowed(country)) return;
+    setFormData({ ...formData, phone: value });
+  };
+
+  const handleGenerateEmail = async () => {
+    if (!formData.message || formData.message.length < 5) {
+      alert('Please write a rough draft of your message first (at least 5 characters).');
       return;
     }
 
-    const digitsOnly = value.replace(/\D/g, '');
-    const totalAllowed = getTotalAllowed(country);
-
-    if (digitsOnly.length > totalAllowed) {
-      return; // Ignore
+    setIsGeneratingEmail(true);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/api/ai/generate-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: formData.message }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate email');
+      setFormData((prev) => ({ ...prev, message: data.email }));
+    } catch (err) {
+      console.error(err);
+      alert('Could not generate email. Please try again.');
+    } finally {
+      setIsGeneratingEmail(false);
     }
-
-    setFormData({ ...formData, phone: value });
   };
 
   const handleSubmit = async (e) => {
@@ -140,9 +138,7 @@ export default function Contact() {
       const digitsOnly = formData.phone.replace(/\D/g, '');
       const callingCode = getCountryCallingCode(country);
       const localDigits = digitsOnly.slice(callingCode.length);
-      const maxDigits = getMaxDigits(country);
-
-      if (localDigits.length !== maxDigits) {
+      if (localDigits.length !== getMaxDigits(country)) {
         setStatus('error');
         setTimeout(() => setStatus('idle'), 4000);
         return;
@@ -154,16 +150,9 @@ export default function Contact() {
       const res = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || '',
-          message: formData.message,
-        }),
+        body: JSON.stringify(formData),
       });
-
       if (!res.ok) throw new Error('Network error');
-
       setStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });
       setCountry('IN');
@@ -298,7 +287,6 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Phone */}
               <div className="contact-form__field">
                 <label htmlFor="phone">Phone (optional)</label>
                 <PhoneInput
@@ -318,12 +306,22 @@ export default function Contact() {
               </div>
 
               <div className="contact-form__field">
-                <label htmlFor="message">Message</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label htmlFor="message" style={{ margin: 0 }}>Message</label>
+                  <button
+                    type="button"
+                    className="contact-form__ai-btn"
+                    onClick={handleGenerateEmail}
+                    disabled={isGeneratingEmail || !formData.message}
+                  >
+                    <FiZap /> {isGeneratingEmail ? 'Magic writing...' : 'Improve with AI'}
+                  </button>
+                </div>
                 <textarea
                   id="message"
                   name="message"
                   rows="5"
-                  placeholder="Tell us about your project..."
+                  placeholder="Tell us about your project (e.g., I need 50 circuit boards)..."
                   value={formData.message}
                   onChange={handleChange}
                   required

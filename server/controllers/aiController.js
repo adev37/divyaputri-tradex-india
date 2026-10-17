@@ -1,6 +1,7 @@
-import { generateChatReply } from '../utils/aiClient.js';
+import { generateChatReply, analyzeDocument, generateProfessionalEmail, analyzeMarketTrend } from '../utils/aiClient.js';
 import ChatLog from '../models/ChatLog.js';
 
+// 1. Chat Controller
 export const chatWithAI = async (req, res, next) => {
   try {
     const { message, history = [] } = req.body;
@@ -15,7 +16,6 @@ export const chatWithAI = async (req, res, next) => {
 
     const reply = await generateChatReply(message.trim(), history);
 
-    // Log to DB (non-blocking)
     try {
       await ChatLog.create({
         userMessage: message.trim(),
@@ -28,6 +28,56 @@ export const chatWithAI = async (req, res, next) => {
     }
 
     res.json({ reply });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 2. Document Analysis Controller
+export const analyzeDocumentController = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const { buffer, mimetype } = req.file;
+    const analysis = await analyzeDocument(buffer, mimetype);
+
+    res.json({ success: true, analysis });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 3. Email Generator Controller
+export const generateEmailController = async (req, res, next) => {
+  try {
+    const { message } = req.body;
+
+    if (!message || message.trim().length < 5) {
+      return res.status(400).json({ error: 'Please write a rough message first.' });
+    }
+
+    const generatedEmail = await generateProfessionalEmail(message.trim());
+
+    res.json({ success: true, email: generatedEmail });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 4. Market Trend Controller
+export const analyzeMarketTrendController = async (req, res, next) => {
+  try {
+    const { industry } = req.body;
+
+    if (!industry) {
+      return res.status(400).json({ error: 'Industry is required.' });
+    }
+
+    const analysis = await analyzeMarketTrend(industry);
+
+    res.json({ success: true, analysis });
   } catch (error) {
     next(error);
   }
