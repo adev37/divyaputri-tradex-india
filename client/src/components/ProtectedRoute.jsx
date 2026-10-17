@@ -8,20 +8,20 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
+    // 1. Agar login nahi hai -> /auth bhejo
     if (!token || !userStr) {
-      navigate(adminOnly ? '/admin-login' : '/auth');
+      navigate('/auth');
       return;
     }
 
+    // 2. Agar Admin route hai par user Admin nahi hai -> /auth bhejo
     try {
       const user = JSON.parse(userStr);
       if (adminOnly && user.role !== 'admin') {
-        // Non-admin can't access
         navigate('/auth');
-        return;
       }
     } catch {
-      navigate(adminOnly ? '/admin-login' : '/auth');
+      navigate('/auth');
     }
   }, [navigate, adminOnly]);
 

@@ -30,7 +30,14 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
+const [user, setUser] = useState(() => {
+  try {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+});
 
   const location = useLocation();
   const navigate = useNavigate();

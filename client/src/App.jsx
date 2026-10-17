@@ -12,8 +12,8 @@ import './App.css';
 
 function App() {
   const location = useLocation();
-
-  // Ye routes pe Navbar/Footer nahi dikhega
+  
+  // Navbar aur Footer hide karne ke liye
   const hideLayout =
     location.pathname === '/auth' ||
     location.pathname === '/admin-login';
@@ -21,14 +21,25 @@ function App() {
   return (
     <div className="app">
       <ScrollToTop />
-
       {!hideLayout && <Navbar />}
-
+      
       <main className={`app__main ${hideLayout ? 'app__main--no-navbar' : ''}`}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Home Page - Login zaroori hai */}
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Auth Pages - Khuli hain */}
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
+          
+          {/* Admin Dashboard - Sirf Admin ke liye */}
           <Route
             path="/admin"
             element={
@@ -41,7 +52,6 @@ function App() {
       </main>
 
       {!hideLayout && <Footer />}
-
       {!hideLayout && <AIChatAssistant />}
     </div>
   );
