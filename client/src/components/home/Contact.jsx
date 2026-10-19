@@ -8,9 +8,12 @@ import {
   FiCheckCircle,
   FiBriefcase,
   FiZap,
+  FiFileText,
+  FiX,
 } from 'react-icons/fi';
 import PhoneInput, { getCountryCallingCode } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import ReactMarkdown from 'react-markdown';
 import './Contact.css';
 
 const COUNTRY_LIMITS = {
@@ -74,6 +77,8 @@ export default function Contact() {
   const [country, setCountry] = useState('IN');
   const [status, setStatus] = useState('idle');
   const [isGeneratingEmail, setIsGeneratingEmail] = useState(false);
+  const [isGeneratingQuote, setIsGeneratingQuote] = useState(false);
+  const [quoteResult, setQuoteResult] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -127,6 +132,31 @@ export default function Contact() {
       alert('Could not generate email. Please try again.');
     } finally {
       setIsGeneratingEmail(false);
+    }
+  };
+
+  const handleGenerateQuote = async () => {
+    if (!formData.message || formData.message.length < 10) {
+      alert('Please describe your requirements (at least 10 characters) in the message box first.');
+      return;
+    }
+
+    setIsGeneratingQuote(true);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/api/ai/generate-quote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requirements: formData.message }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Quote generation failed');
+      setQuoteResult(data.quote);
+    } catch (err) {
+      console.error(err);
+      alert('Could not generate quote. Please try again.');
+    } finally {
+      setIsGeneratingQuote(false);
     }
   };
 
@@ -306,16 +336,27 @@ export default function Contact() {
               </div>
 
               <div className="contact-form__field">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
                   <label htmlFor="message" style={{ margin: 0 }}>Message</label>
-                  <button
-                    type="button"
-                    className="contact-form__ai-btn"
-                    onClick={handleGenerateEmail}
-                    disabled={isGeneratingEmail || !formData.message}
-                  >
-                    <FiZap /> {isGeneratingEmail ? 'Magic writing...' : 'Improve with AI'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="contact-form__ai-btn"
+                      onClick={handleGenerateEmail}
+                      disabled={isGeneratingEmail || !formData.message}
+                    >
+                      <FiZap /> {isGeneratingEmail ? 'Writing...' : 'Improve AI'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="contact-form__ai-btn contact-form__ai-btn--quote"
+                      onClick={handleGenerateQuote}
+                      disabled={isGeneratingQuote || !formData.message}
+                    >
+                      <FiFileText /> {isGeneratingQuote ? 'Calculating...' : 'Smart Quote'}
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   id="message"
@@ -363,6 +404,35 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
+
+      {/* ✅ Smart Quote Modal */}
+      {quoteResult && (
+        <div className="quote-modal-overlay" onClick={() => setQuoteResult(null)}>
+          <div className="quote-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="quote-modal__header">
+              <h3>Your Smart Quotation</h3>
+              <button className="quote-modal__close" onClick={() => setQuoteResult(null)}>
+                <FiX />
+              </button>
+            </div>
+            <div className="quote-modal__content">
+              <ReactMarkdown
+                components={{
+                  p: ({ node, ...props }) => <p style={{ marginBottom: '12px' }} {...props} />,
+                  br: () => <br style={{ marginBottom: '8px' }} />,
+                }}
+              >
+                {quoteResult}
+              </ReactMarkdown>
+            </div>
+            <div className="quote-modal__footer">
+              <button className="btn btn-primary" onClick={() => setQuoteResult(null)}>
+                Close & Review
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

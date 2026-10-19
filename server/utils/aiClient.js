@@ -239,3 +239,44 @@ Be encouraging but professional. If there are no new contacts, tell them to focu
   }
   throw new Error(lastError?.message || 'Failed to generate insights.');
 };
+
+// ✅ SMART QUOTE GENERATOR (AI Agent)
+export const generateSmartQuote = async (requirements) => {
+  if (!genAI) throw new Error('Gemini API is not configured.');
+
+  const prompt = `You are an AI Sales Manager at Divyaputri Tradex LLP (Nano-tech company).
+Our Products:
+1. Nano Coated Circuit Boards (Electronics)
+2. Antimicrobial Medical Devices (Medical)
+3. Self-Lubricating Rail Components (Railway)
+4. Performance Sports Gear (Sports)
+5. Thermal Nano Pastes (Electronics)
+6. Drug Delivery Nanoparticles (Medical)
+
+A client has requested: "${requirements}"
+
+Your task:
+1. Identify which of our products best fit their request.
+2. Create a professional, itemized B2B quotation.
+3. Do NOT include any prices. Just list the required products and quantities with their technical benefits.
+
+IMPORTANT: Do NOT use markdown tables (no pipes | or dashes ---). Do NOT use asterisks for bold text (**). 
+Just use clean, plain text with simple numbered lists and bullet points.
+Format the response clearly with headings (e.g., 1. Technical Overview, 2. Itemized Cost, 3. Terms & Conditions).
+Keep the tone highly professional. Start directly with the quote.`;
+
+  const models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+  let lastError = null;
+
+  for (const modelName of models) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    } catch (err) {
+      console.warn(`❌ Quote gen failed for ${modelName}:`, err.message);
+      lastError = err;
+    }
+  }
+  throw new Error(lastError?.message || 'Failed to generate quote.');
+};

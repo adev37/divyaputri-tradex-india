@@ -424,3 +424,154 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Naya Quote Button Style */
+.contact-form__ai-btn--quote {
+  background: color-mix(in srgb, #8B5CF6 15%, transparent); /* Purple tint */
+  color: #8B5CF6;
+  border-color: color-mix(in srgb, #8B5CF6 30%, transparent);
+}
+.contact-form__ai-btn--quote:hover:not(:disabled) {
+  background: #8B5CF6;
+  color: #fff;
+}
+
+/* Quote Modal Overlay */
+/* Quote Modal Overlay */
+.quote-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.quote-modal {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 750px; /* Thoda aur bada kiya */
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden; /* Bahar nikalna band */
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.quote-modal__header {
+  display: flex;
+  flex-direction: column; /* Center me laane ke liye */
+  align-items: center;    /* Center alignment */
+  justify-content: center;
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-soft);
+  position: relative;
+}
+
+/* Close button ko right side pe wapas bhejne ke liye */
+.quote-modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quote-modal__close:hover {
+  color: var(--error);
+  transform: rotate(90deg);
+}
+
+/* Heading Style */
+.quote-modal__header h3 {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase; /* Invoice jaisa dikhne ke liye */
+  margin: 20px 0;
+}
+
+.quote-modal__content {
+  padding: var(--space-8) var(--space-8); /* Top aur sides me barabar padding */
+  overflow-y: auto; 
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+/* First element ka margin top 0 karo taaki chipke nahi */
+.quote-modal__content > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Scrollbar styling for modal */
+.quote-modal__content::-webkit-scrollbar {
+  width: 6px;
+}
+.quote-modal__content::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+/* Markdown Text Formatting inside Modal */
+.quote-modal__content h1,
+.quote-modal__content h2,
+.quote-modal__content h3 {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 4px;
+}
+
+.quote-modal__content h1:first-child,
+.quote-modal__content h2:first-child,
+.quote-modal__content h3:first-child {
+  margin-top: 0;
+}
+
+.quote-modal__content ul,
+.quote-modal__content ol {
+  margin-left: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.quote-modal__content li {
+  margin-bottom: var(--space-2);
+  list-style-type: decimal; /* Numbers ke liye */
+}
+
+.quote-modal__content ul li {
+  list-style-type: disc; /* Bullets ke liye */
+}
+
+.quote-modal__content p {
+  margin-bottom: var(--space-3);
+}
+
+.quote-modal__footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  background: var(--bg-soft);
+}

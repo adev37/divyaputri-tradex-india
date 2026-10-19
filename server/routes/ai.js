@@ -1,11 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { 
-  chatWithAI, 
-  analyzeDocumentController, 
-  generateEmailController, 
-  analyzeMarketTrendController 
-} from '../controllers/aiController.js';
+import { chatWithAI, analyzeDocumentController, generateEmailController, analyzeMarketTrendController, generateQuoteController } from '../controllers/aiController.js';
 import upload from '../middleware/upload.js';
 
 const router = express.Router();
@@ -28,5 +23,6 @@ router.post('/chat', chatLimiter, chatWithAI);
 router.post('/analyze-document', docLimiter, upload.single('document'), analyzeDocumentController);
 router.post('/generate-email', chatLimiter, generateEmailController);
 router.post('/analyze-trends', chatLimiter, analyzeMarketTrendController);
+router.post('/generate-quote', chatLimiter, generateQuoteController);
 
 export default router;

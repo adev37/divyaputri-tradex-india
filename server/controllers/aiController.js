@@ -1,4 +1,4 @@
-import { generateChatReply, analyzeDocument, generateProfessionalEmail, analyzeMarketTrend } from '../utils/aiClient.js';
+import { generateChatReply, analyzeDocument, generateProfessionalEmail, analyzeMarketTrend, generateSmartQuote } from '../utils/aiClient.js';
 import ChatLog from '../models/ChatLog.js';
 
 // 1. Chat Controller
@@ -78,6 +78,19 @@ export const analyzeMarketTrendController = async (req, res, next) => {
     const analysis = await analyzeMarketTrend(industry);
 
     res.json({ success: true, analysis });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const generateQuoteController = async (req, res, next) => {
+  try {
+    const { requirements } = req.body;
+    if (!requirements || requirements.length < 10) {
+      return res.status(400).json({ error: 'Please provide detailed requirements.' });
+    }
+    const quote = await generateSmartQuote(requirements);
+    res.json({ success: true, quote });
   } catch (error) {
     next(error);
   }
