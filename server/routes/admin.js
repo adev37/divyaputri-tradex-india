@@ -1,5 +1,5 @@
 import express from 'express';
-import { getStats, getContacts, getUsers, getAIInsights } from '../controllers/adminController.js';
+import { getStats, getContacts, getUsers, getAIInsights, getCompetitorAnalysis } from '../controllers/adminController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -10,7 +10,7 @@ router.get('/stats', getStats);
 router.get('/contacts', getContacts);
 router.get('/users', getUsers);
 
-// ✅ Naya Route
 router.get('/ai-insights', getAIInsights);
+router.get('/competitor-analysis', getCompetitorAnalysis);
 
 export default router;

@@ -280,3 +280,69 @@ Keep the tone highly professional. Start directly with the quote.`;
   }
   throw new Error(lastError?.message || 'Failed to generate quote.');
 };
+
+// ✅ COMPETITOR ANALYSIS FUNCTION
+export const analyzeCompetitors = async () => {
+  if (!genAI) throw new Error('Gemini API is not configured.');
+
+  const prompt = `You are a Senior Business Strategy Consultant for Divyaputri Tradex LLP (a nano-tech company).
+Analyze the current nano-technology market. Identify 2-3 general competitor strategies (e.g., focusing on medical, electronics, etc.). 
+Provide a short strategic report:
+1. Top Competitor Focus Areas
+2. Market Gaps & Opportunities
+3. Strategic Recommendation for Divyaputri Tradex
+
+Keep it concise, professional, and use bullet points.`;
+
+  const models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+  let lastError = null;
+
+  for (const modelName of models) {
+    try {
+      console.log(`📊 Analyzing competitors via ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    } catch (err) {
+      console.warn(`❌ Competitor analysis failed:`, err.message);
+      lastError = err;
+    }
+  }
+  throw new Error(lastError?.message || 'Failed to analyze competitors.');
+};
+
+// ✅ PRODUCT RECOMMENDATION (Vision AI)
+export const recommendProductFromImage = async (fileBuffer, mimeType) => {
+  if (!genAI) throw new Error('Gemini API is not configured.');
+
+  const prompt = `You are a Sales Engineer at Divyaputri Tradex LLP (Nano-tech).
+I have attached an image of a machine, factory part, or equipment.
+Analyze the image and recommend which of our nano-tech products would be most useful.
+Our Products:
+- Nano Coated Circuit Boards
+- Antimicrobial Medical Devices
+- Self-Lubricating Rail Components
+- Performance Sports Gear
+- Thermal Nano Pastes
+- Drug Delivery Nanoparticles
+
+Output a short, 2-3 sentence pitch on why this product is the perfect fit.
+
+IMPORTANT: Do NOT use any markdown formatting (no asterisks **). Just output clean, plain text.`;
+
+  const models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+  let lastError = null;
+
+  for (const modelName of models) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const filePart = { inlineData: { data: fileBuffer.toString('base64'), mimeType: mimeType } };
+      const result = await model.generateContent([prompt, filePart]);
+      return result.response.text().trim();
+    } catch (err) {
+      console.warn(`❌ Image recommendation failed:`, err.message);
+      lastError = err;
+    }
+  }
+  throw new Error(lastError?.message || 'Failed to recommend product.');
+};

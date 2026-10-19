@@ -1,7 +1,7 @@
 import Contact from '../models/Contact.js';
 import User from '../models/User.js';
 import ChatLog from '../models/ChatLog.js';
-import { generateAdminInsights } from '../utils/aiClient.js';
+import { generateAdminInsights, analyzeCompetitors } from '../utils/aiClient.js';
 
 /* ===== DASHBOARD STATS ===== */
 export const getStats = async (req, res, next) => {
@@ -62,6 +62,15 @@ export const getAIInsights = async (req, res, next) => {
 
     // 3. Response bhejo
     res.json({ success: true, insight });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCompetitorAnalysis = async (req, res, next) => {
+  try {
+    const analysis = await analyzeCompetitors();
+    res.json({ success: true, analysis });
   } catch (error) {
     next(error);
   }

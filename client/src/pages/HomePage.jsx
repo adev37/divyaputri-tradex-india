@@ -5,6 +5,7 @@ import AIDocumentReader from '../components/ai/AIDocumentReader';
 import AIMarketAnalyzer from '../components/ai/AIMarketAnalyzer';
 import About from '../components/home/About';
 import Contact from '../components/home/Contact';
+import AIVisionRecommendation from '../components/ai/AIVisionRecommendation';
 
 export default function HomePage() {
   return (
@@ -27,6 +28,7 @@ export default function HomePage() {
           </div>
           
           <AIDocumentReader />
+          <AIVisionRecommendation />
           
           <div style={{ marginTop: '4rem' }}>
             <AIMarketAnalyzer />

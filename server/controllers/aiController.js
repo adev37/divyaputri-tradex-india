@@ -1,4 +1,4 @@
-import { generateChatReply, analyzeDocument, generateProfessionalEmail, analyzeMarketTrend, generateSmartQuote } from '../utils/aiClient.js';
+import { generateChatReply, analyzeDocument, generateProfessionalEmail, analyzeMarketTrend, generateSmartQuote, recommendProductFromImage } from '../utils/aiClient.js';
 import ChatLog from '../models/ChatLog.js';
 
 // 1. Chat Controller
@@ -91,6 +91,17 @@ export const generateQuoteController = async (req, res, next) => {
     }
     const quote = await generateSmartQuote(requirements);
     res.json({ success: true, quote });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const recommendProductController = async (req, res, next) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+    const { buffer, mimetype } = req.file;
+    const recommendation = await recommendProductFromImage(buffer, mimetype);
+    res.json({ success: true, recommendation });
   } catch (error) {
     next(error);
   }
