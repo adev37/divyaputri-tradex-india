@@ -28,45 +28,48 @@ export const getContacts = async (req, res, next) => {
   }
 };
 
-/* ===== GET ALL USERS ===== */
+/* ===== GET ALL USERS (Sirf Ek Baar) ===== */
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 }).limit(100);
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
     res.json({ users });
   } catch (error) {
     next(error);
   }
 };
 
+/* ===== GET ALL CHATS (Naya) ===== */
+export const getChats = async (req, res, next) => {
+  try {
+    const chats = await ChatLog.find().sort({ createdAt: -1 }).limit(100);
+    res.json({ chats });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* ===== AI INSIGHTS ===== */
 export const getAIInsights = async (req, res, next) => {
   try {
-    // 1. Database se stats nikaalo
     const [contacts, users, chats, latestContactsRaw] = await Promise.all([
       Contact.countDocuments(),
       User.countDocuments(),
       ChatLog.countDocuments(),
-      Contact.find().sort({ createdAt: -1 }).limit(3), // Latest 3 contacts
+      Contact.find().sort({ createdAt: -1 }).limit(3),
     ]);
 
     const latestContacts = latestContactsRaw.map(c => `${c.name} (${c.email})`);
 
-    const statsData = {
-      contacts,
-      users,
-      chats,
-      latestContacts,
-    };
-
-    // 2. AI se insight mangwao
+    const statsData = { contacts, users, chats, latestContacts };
     const insight = await generateAdminInsights(statsData);
 
-    // 3. Response bhejo
     res.json({ success: true, insight });
   } catch (error) {
     next(error);
   }
 };
 
+/* ===== COMPETITOR ANALYSIS ===== */
 export const getCompetitorAnalysis = async (req, res, next) => {
   try {
     const analysis = await analyzeCompetitors();

@@ -724,3 +724,118 @@
   }
 }
 }
+
+/* ===== ACTIVE CARD STATE ===== */
+.admin-stat--active {
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== BADGE (Users Role) ===== */
+.admin-badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+}
+.admin-badge--admin {
+  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+}
+
+/* ===== MODAL (Message Popup) ===== */
+/* ===== MODAL (Message Popup) ===== */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.admin-modal {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  animation: modalPop 0.3s ease;
+  overflow: hidden; /* ✅ Bahar nikalna band */
+}
+
+.admin-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* ✅ Top, Right, Bottom, Left padding badhayi */
+  padding: 20px 24px 16px 24px; 
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-soft); /* Optional: Header ko alag dikhane ke liye */
+}
+
+.admin-modal__header h3 {
+  font-size: var(--fs-lg);
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.4; /* ✅ Sirf ye ek line add karo */
+}
+
+.admin-modal__close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.admin-modal__close:hover {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+.admin-modal__body {
+  /* ✅ Body me proper padding di (Top/Bottom 24px, Left/Right 24px) */
+  padding: 24px; 
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Mobile View me padding thoda kam */
+@media (max-width: 480px) {
+  .admin-modal__header,
+  .admin-modal__body {
+    padding: 16px 20px;
+  }
+}
+
+@keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.admin-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 16px 24px; /* ✅ Top padding 20px se 24px kiya */
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-soft);
+}
+.admin-modal__header h3 { font-size: var(--fs-lg); color: var(--color-primary); }
+.admin-modal__close {
+  background: transparent; border: none; color: var(--text-muted);
+  font-size: 1.5rem; cursor: pointer;
+}
+.admin-modal__close:hover { color: var(--error); }
+.admin-modal__body { padding: var(--space-6); color: var(--text-secondary); }

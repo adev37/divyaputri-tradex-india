@@ -31,6 +31,11 @@ export default function AdminPage() {
   const [competitorInsight, setCompetitorInsight] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+    // ✅ Naye States (Purane state waise hi rahenge)
+  const [tableType, setTableType] = useState('contacts'); 
+  const [tableData, setTableData] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null); 
+
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -43,19 +48,21 @@ export default function AdminPage() {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  // ✅ Naya fetchData (Card Click handle karega)
+  const fetchData = async (type = 'contacts') => {
     setLoading(true);
     setError('');
+    setTableType(type);
 
     try {
       const headers = { Authorization: `Bearer ${token}` };
 
-      const [statsRes, contactsRes] = await Promise.all([
+      const [statsRes, dataRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/stats`, { headers }),
-        fetch(`${API_URL}/api/admin/contacts`, { headers }),
+        fetch(`${API_URL}/api/admin/${type}`, { headers }),
       ]);
 
-      if (statsRes.status === 401 || contactsRes.status === 401) {
+      if (statsRes.status === 401 || dataRes.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = '/auth';
@@ -63,10 +70,11 @@ export default function AdminPage() {
       }
 
       const statsData = await statsRes.json();
-      const contactsData = await contactsRes.json();
+      const data = await dataRes.json();
 
       setStats(statsData);
-      setContacts(contactsData.contacts || []);
+      // API se jo bhi aaye (contacts, users, ya chats), usko set karo
+      setTableData(data[type] || []); 
       setLoading(false);
 
     } catch (err) {
@@ -122,9 +130,9 @@ export default function AdminPage() {
   }
 
   const statCards = [
-    { icon: FiMail, label: 'Contact Submissions', value: stats?.contacts || 0, color: 'blue' },
-    { icon: FiUsers, label: 'Registered Users', value: stats?.users || 0, color: 'green' },
-    { icon: FiMessageCircle, label: 'AI Chat Messages', value: stats?.chats || 0, color: 'amber' },
+    { icon: FiMail, label: 'Contact Submissions', value: stats?.contacts || 0, color: 'blue', type: 'contacts' }, // ✅ type add kiya
+    { icon: FiUsers, label: 'Registered Users', value: stats?.users || 0, color: 'green', type: 'users' }, // ✅ type add kiya
+    { icon: FiMessageCircle, label: 'AI Chat Messages', value: stats?.chats || 0, color: 'amber', type: 'chats' }, // ✅ type add kiya
   ];
 
   return (
@@ -214,7 +222,16 @@ export default function AdminPage() {
           {statCards.map((stat, i) => {
             const Icon = stat.icon;
             return (
-              <motion.div key={stat.label} className={`admin-stat admin-stat--${stat.color}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.1 }}>
+              <motion.div 
+                key={stat.label} 
+                className={`admin-stat admin-stat--${stat.color}`} 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ delay: 0.2 + i * 0.1 }}
+                // ✅ Ye 2 lines add karo click ke liye
+                onClick={() => fetchData(stat.type)}
+                style={{ cursor: 'pointer', border: tableType === stat.type ? '1px solid var(--color-primary)' : '1px solid var(--border-color)' }}
+              >
                 <div className="admin-stat__bar" />
                 <div className="admin-stat__icon"><Icon /></div>
                 <div className="admin-stat__body">
@@ -230,41 +247,57 @@ export default function AdminPage() {
         <motion.section className="admin-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <div className="admin-section__header">
             <div>
-              <h2>Recent Contact Submissions</h2>
-              <p>Latest messages from potential clients</p>
+              <h2>
+                {tableType === 'contacts' && 'Recent Contact Submissions'}
+                {tableType === 'users' && 'Registered Users'}
+                {tableType === 'chats' && 'AI Chat Messages'}
+              </h2>
+              <p>Latest data from potential clients</p>
             </div>
-            <span className="admin-section__badge">{contacts.length} total</span>
+            <span className="admin-section__badge">{tableData.length} total</span>
           </div>
 
-          {contacts.length === 0 ? (
+          {tableData.length === 0 ? (
             <div className="admin-empty">
               <div className="admin-empty__icon"><FiInbox /></div>
-              <h3>No submissions yet</h3>
-              <p>When someone submits the contact form, their message will appear here.</p>
-              <a href="/" className="admin-empty__link">View website <FiExternalLink /></a>
+              <h3>No data found</h3>
             </div>
           ) : (
             <div className="admin-table-scroll">
               <table className="admin-table">
                 <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Message</th>
-                    <th>Date</th>
-                  </tr>
+                  {tableType === 'contacts' && <tr><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Date</th></tr>}
+                  {tableType === 'users' && <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>}
+                  {tableType === 'chats' && <tr><th>User Msg</th><th>AI Reply</th><th>Date</th></tr>}
                 </thead>
                 <tbody>
-                  {contacts.map((c) => (
-                    <tr key={c._id}>
+                  {/* Contacts Table */}
+                  {tableType === 'contacts' && tableData.map((c) => (
+                    <tr key={c._id} onClick={() => setSelectedContact(c)} style={{ cursor: 'pointer' }}>
                       <td><span className="admin-table__name">{c.name}</span></td>
-                      <td><a href={`mailto:${c.email}`}>{c.email}</a></td>
+                      <td>{c.email}</td>
                       <td>{c.phone || '—'}</td>
                       <td className="admin-table__msg">{c.message}</td>
-                      <td className="admin-table__date">
-                        {new Date(c.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                      </td>
+                      <td className="admin-table__date">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                  
+                  {/* Users Table */}
+                  {tableType === 'users' && tableData.map((u) => (
+                    <tr key={u._id}>
+                      <td><span className="admin-table__name">{u.name}</span></td>
+                      <td>{u.email}</td>
+                      <td><span className={`admin-badge ${u.role === 'admin' ? 'admin-badge--admin' : ''}`}>{u.role}</span></td>
+                      <td className="admin-table__date">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+
+                  {/* Chats Table */}
+                  {tableType === 'chats' && tableData.map((chat) => (
+                    <tr key={chat._id}>
+                      <td className="admin-table__msg">{chat.userMessage}</td>
+                      <td className="admin-table__msg" style={{ color: 'var(--color-primary)' }}>{chat.aiReply}</td>
+                      <td className="admin-table__date">{new Date(chat.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -273,6 +306,26 @@ export default function AdminPage() {
           )}
         </motion.section>
       </div>
+                    {/* ✅ Message Modal */}
+      {selectedContact && (
+        <div className="admin-modal-overlay" onClick={() => setSelectedContact(null)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal__header">
+              <h3>Message from {selectedContact.name}</h3>
+              <button className="admin-modal__close" onClick={() => setSelectedContact(null)}><FiX /></button>
+            </div>
+            <div className="admin-modal__body">
+              <p><strong>Email:</strong> {selectedContact.email}</p>
+              <p><strong>Phone:</strong> {selectedContact.phone || 'N/A'}</p>
+              <p><strong>Date:</strong> {new Date(selectedContact.createdAt).toLocaleString()}</p>
+              <hr style={{ margin: '16px 0', borderColor: 'var(--border-color)' }} />
+              <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '15px' }}>
+                {selectedContact.message}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
