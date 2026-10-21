@@ -1,0 +1,204 @@
+/* ===== BASE STYLES ===== */
+.ai-vision-scanner {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-top: var(--space-8);
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.ai-vision-scanner__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.ai-vision-scanner__header h2 {
+  font-size: var(--fs-2xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.ai-vision-scanner__header p {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.ai-vision-scanner__upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-soft);
+}
+
+.ai-vision-scanner__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.ai-vision-scanner__preview img {
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== RESULT SECTION ===== */
+.ai-vision-scanner__result {
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  border-radius: var(--radius-md);
+}
+
+/* ✅ NAYA RESULT HEADER & CLOSE BTN */
+.ai-vision-scanner__result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.ai-vision-scanner__result-header strong {
+  color: var(--color-primary);
+  font-size: var(--fs-sm);
+}
+
+.ai-vision-scanner__close-icon {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-vision-scanner__close-icon:hover {
+  color: var(--error);
+  transform: scale(1.1);
+}
+
+.ai-vision-scanner__result p {
+  color: var(--text-primary);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+}
+
+/* ===== BUTTONS (Desktop) ===== */
+.ai-vision-scanner__upload-area .btn {
+  width: auto !important;
+  min-width: 160px !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 24px !important;
+  margin: 0 auto !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Scan/Close Result Button */
+.ai-vision-scanner__scan-btn {
+  width: auto !important;
+  min-width: 200px !important;
+}
+
+/* ===== MOBILE VIEW FIXES ===== */
+@media (max-width: 768px) {
+  .ai-vision-scanner {
+    margin-top: 24px !important;
+    padding: 24px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .ai-vision-scanner__upload-area {
+    padding: 24px 16px !important;
+    gap: 16px !important;
+  }
+
+  .ai-vision-scanner__upload-area .btn {
+    width: 100% !important;
+    min-width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    gap: 10px !important;
+  }
+
+  .ai-vision-scanner__upload-area .btn:active {
+    transform: scale(0.98) !important;
+  }
+
+  .ai-vision-scanner__header {
+    margin-bottom: 20px !important;
+  }
+  
+  .ai-vision-scanner__header h2 {
+    font-size: 20px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .ai-vision-scanner__header p {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    padding: 0 8px !important;
+  }
+
+  .ai-vision-scanner__preview {
+    width: 100% !important;
+  }
+
+  .ai-vision-scanner__preview img {
+    max-height: 150px !important;
+    width: auto !important;
+  }
+
+  .ai-vision-scanner__preview .btn {
+    width: 100% !important;
+    padding: 12px !important;
+    justify-content: center !important;
+  }
+
+  .ai-vision-scanner__scan-btn {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* ===== AI RECOMMENDATION RESULT BOX PADDING FIX ===== */
+.ai-vision-scanner__result {
+  padding: 20px !important; /* Box ke andar chaaro taraf proper gap */
+  border-radius: 12px !important;
+  margin-top: 20px !important; 
+}
+
+.ai-vision-scanner__result p {
+  margin: 0 !important; /* Faltu ka default margin hataya */
+  padding: 0 4px !important; /* Text ko border se thoda aur door kiya */
+  font-size: 14px !important; /* Mobile ke liye perfect size */
+  line-height: 1.6 !important; /* Lines ke beech gap taaki padhne me aaram ho */
+  word-break: break-word !important; /* Lambe words box se bahar na nikle */
+}
+
+/* Header (AI Recommendation + Close Button) ki spacing */
+.ai-vision-scanner__result-header {
+  padding-bottom: 12px !important;
+  margin-bottom: 12px !important;
+}

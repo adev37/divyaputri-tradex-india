@@ -22,11 +22,11 @@ export default function AdminPage() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // AI Insights State
   const [aiInsight, setAiInsight] = useState('');
   const [insightLoading, setInsightLoading] = useState(false);
-  
+
   // Competitor Analysis State
   const [competitorInsight, setCompetitorInsight] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -179,23 +179,23 @@ export default function AdminPage() {
               <>
                 <div style={{ marginTop: '10px', fontSize: '14px', lineHeight: 1.6 }}>
                   <ReactMarkdown
-  components={{
-    p: ({ node, ...props }) => (
-      <p style={{ margin: '0 0 12px 0', lineHeight: '1.6', color: 'var(--text-secondary)' }} {...props} />
-    ),
-    strong: ({ node, ...props }) => (
-      <strong style={{ color: 'var(--text-primary)', display: 'inline-block', marginTop: '8px' }} {...props} />
-    ),
-    h1: ({ node, ...props }) => <h1 style={{ fontSize: 'var(--fs-lg)', margin: '16px 0 8px 0', color: 'var(--color-primary)' }} {...props} />,
-    h2: ({ node, ...props }) => <h2 style={{ fontSize: 'var(--fs-base)', margin: '16px 0 8px 0', color: 'var(--color-primary)' }} {...props} />,
-    h3: ({ node, ...props }) => <h3 style={{ fontSize: 'var(--fs-sm)', margin: '16px 0 8px 0', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }} {...props} />,
-    li: ({ node, ...props }) => (
-      <li style={{ marginBottom: '6px', marginLeft: '16px', listStyleType: 'disc', color: 'var(--text-secondary)' }} {...props} />
-    )
-  }}
->
-  {competitorInsight}
-</ReactMarkdown>
+                    components={{
+                      p: ({ node, ...props }) => (
+                        <p style={{ margin: '0 0 12px 0', lineHeight: '1.6', color: 'var(--text-secondary)' }} {...props} />
+                      ),
+                      strong: ({ node, ...props }) => (
+                        <strong style={{ color: 'var(--text-primary)', display: 'inline-block', marginTop: '8px' }} {...props} />
+                      ),
+                      h1: ({ node, ...props }) => <h1 style={{ fontSize: 'var(--fs-lg)', margin: '16px 0 8px 0', color: 'var(--color-primary)' }} {...props} />,
+                      h2: ({ node, ...props }) => <h2 style={{ fontSize: 'var(--fs-base)', margin: '16px 0 8px 0', color: 'var(--color-primary)' }} {...props} />,
+                      h3: ({ node, ...props }) => <h3 style={{ fontSize: 'var(--fs-sm)', margin: '16px 0 8px 0', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }} {...props} />,
+                      li: ({ node, ...props }) => (
+                        <li style={{ marginBottom: '6px', marginLeft: '16px', listStyleType: 'disc', color: 'var(--text-secondary)' }} {...props} />
+                      )
+                    }}
+                  >
+                    {competitorInsight}
+                  </ReactMarkdown>
                 </div>
                 <button className="admin-btn admin-btn--ghost" onClick={() => setCompetitorInsight('')} style={{ marginTop: '10px', padding: '6px 12px', fontSize: '12px' }}>
                   <FiX /> Close Analysis

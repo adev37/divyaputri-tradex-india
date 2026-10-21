@@ -44,12 +44,17 @@ export default function AdminLoginPage() {
         throw new Error('Access denied. Admin credentials required.');
       }
 
-localStorage.setItem('token', data.token);
-localStorage.setItem('user', JSON.stringify(data.user));
-window.dispatchEvent(new Event('userAuthChanged'));  // ✅ add
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Navbar ko update karne ke liye event
+      window.dispatchEvent(new Event('userAuthChanged'));
 
       setStatus('success');
-      setTimeout(() => navigate('/admin'), 600);
+      // Redirect to Admin Dashboard
+      setTimeout(() => {
+        window.location.href = '/admin'; 
+      }, 600);
     } catch (err) {
       setError(err.message);
       setStatus('error');

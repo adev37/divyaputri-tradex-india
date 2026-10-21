@@ -1,15 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiTrendingUp, FiCpu, FiArrowRight, FiRefreshCw } from 'react-icons/fi';
+import { FiTrendingUp, FiCpu, FiArrowRight, FiRefreshCw, FiX } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 import './AIMarketAnalyzer.css';
 
-const INDUSTRIES = [
-  'Electronics',
-  'Medical',
-  'Railway',
-  'Sports',
-];
+const INDUSTRIES = ['Electronics', 'Medical', 'Railway', 'Sports'];
 
 export default function AIMarketAnalyzer() {
   const [industry, setIndustry] = useState('Electronics');
@@ -42,6 +37,8 @@ export default function AIMarketAnalyzer() {
     }
   };
 
+  const handleReset = () => setResult(null);
+
   return (
     <div className="ai-market">
       <div className="ai-market__header">
@@ -60,9 +57,7 @@ export default function AIMarketAnalyzer() {
           disabled={loading}
         >
           {INDUSTRIES.map((ind) => (
-            <option key={ind} value={ind}>
-              {ind}
-            </option>
+            <option key={ind} value={ind}>{ind}</option>
           ))}
         </select>
 
@@ -72,13 +67,9 @@ export default function AIMarketAnalyzer() {
           disabled={loading}
         >
           {loading ? (
-            <>
-              <FiCpu className="spinning" /> Analyzing...
-            </>
+            <><FiCpu className="spinning" /> Analyzing...</>
           ) : (
-            <>
-              Analyze Trends <FiArrowRight />
-            </>
+            <>Analyze Trends <FiArrowRight /></>
           )}
         </button>
       </div>
@@ -94,13 +85,15 @@ export default function AIMarketAnalyzer() {
           >
             <div className="ai-market__result-header">
               <h4>Strategic Report: {industry}</h4>
-              <button
-                className="ai-market__reset"
-                onClick={() => setResult(null)}
-                title="Analyze another industry"
-              >
-                <FiRefreshCw />
-              </button>
+              <div className="ai-market__actions">
+                <button
+                  className="ai-market__close-btn"
+                  onClick={handleReset}
+                  title="Close report"
+                >
+                  <FiX /> Close
+                </button>
+              </div>
             </div>
             <div className="ai-market__content">
               <ReactMarkdown>{result}</ReactMarkdown>

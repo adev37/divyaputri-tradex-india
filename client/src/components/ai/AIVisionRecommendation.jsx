@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { FiCamera, FiUploadCloud } from 'react-icons/fi';
+import { FiCamera, FiUploadCloud, FiX } from 'react-icons/fi'; // ✅ FiX import kiya
+import './AIVisionRecommendation.css';
 
 export default function AIVisionRecommendation() {
   const [image, setImage] = useState(null);
@@ -28,34 +29,59 @@ export default function AIVisionRecommendation() {
     }
   };
 
+  // ✅ Reset function
+  const handleReset = () => {
+    setImage(null);
+    setRecommendation('');
+    if (fileRef.current) fileRef.current.value = '';
+  };
+
   return (
-    <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '10px', marginTop: '40px', background: '#fff' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>📸 AI Product Scanner</h2>
-      <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px' }}>Upload a photo of your machine to get the best product recommendation.</p>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-        <input type="file" hidden ref={fileRef} onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
+    <div className="ai-vision-scanner">
+      <div className="ai-vision-scanner__header">
+        <h2>📸 AI Product Scanner</h2>
+        <p>Upload a photo of your machine to get the best product recommendation.</p>
+      </div>
+
+      <div className="ai-vision-scanner__upload-area">
+        <input 
+          type="file" 
+          hidden 
+          ref={fileRef} 
+          onChange={(e) => setImage(e.target.files[0])} 
+          accept="image/*" 
+        />
         
         {!image ? (
           <button className="btn btn-outline" onClick={() => fileRef.current.click()}>
             <FiUploadCloud /> Select Image
           </button>
         ) : (
-          <>
-            <img src={URL.createObjectURL(image)} alt="upload" style={{ height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
-            <button className="btn btn-primary" onClick={handleUpload} disabled={loading}>
-              <FiCamera /> {loading ? 'Scanning...' : 'Scan with AI'}
-            </button>
-          </>
+          <div className="ai-vision-scanner__preview">
+            <img src={URL.createObjectURL(image)} alt="upload preview" />
+            
+            {!recommendation ? (
+              <button className="btn btn-primary ai-vision-scanner__scan-btn" onClick={handleUpload} disabled={loading}>
+                <FiCamera /> {loading ? 'Scanning...' : 'Scan with AI'}
+              </button>
+            ) : (
+              <button className="btn btn-outline ai-vision-scanner__scan-btn" onClick={handleReset}>
+                <FiX /> Close Result
+              </button>
+            )}
+          </div>
         )}
       </div>
 
       {recommendation && (
-        <div style={{ marginTop: '20px', padding: '15px', background: '#f0f7ff', borderRadius: '8px' }}>
-          <strong>AI Recommendation:</strong>
-          <p style={{ marginTop: '8px' }}>
-  {recommendation.replace(/\*\*/g, '')} 
-</p>
+        <div className="ai-vision-scanner__result">
+          <div className="ai-vision-scanner__result-header">
+            <strong>AI Recommendation:</strong>
+            <button className="ai-vision-scanner__close-icon" onClick={handleReset} aria-label="Close">
+              <FiX />
+            </button>
+          </div>
+          <p>{recommendation.replace(/\*\*/g, '')}</p>
         </div>
       )}
     </div>
